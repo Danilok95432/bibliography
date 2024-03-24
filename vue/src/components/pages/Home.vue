@@ -108,7 +108,42 @@ export default {
       typeOfList: 'ol',
       selectedTypes: [],
       sortBy: null,
+      sortFunc: null,
       groupField: null
+    }
+  },
+  created() {
+    const urlParams = new URLSearchParams(window.location.search)
+    if (urlParams.has('filters') || urlParams.has('sorting')) {
+      if (urlParams.has('filters')) {
+        this.selectedTypes = JSON.parse(urlParams.get('filters'))
+      }
+      if (urlParams.has('sorting')) {
+        this.sortBy = urlParams.get('sorting')
+      }
+    }
+    else {
+      const localFilters = localStorage.getItem('filters')
+      const localSorting = localStorage.getItem('sorting')
+      if (localFilters) {
+        this.selectedTypes = JSON.parse(localFilters)
+      }
+      if (localSorting) {
+        this.sortBy = localSorting
+      }
+    }
+  },
+  watch: {
+    selectedTypes: {
+      handler () {
+        localStorage.setItem('filters', JSON.stringify(this.selectedTypes))
+        this.pushQueryParams()
+        },
+        deep: true
+    },
+    sortBy () {
+      localStorage.setItem('sorting', this.sortBy)
+      this.pushQueryParams()
     }
   },
   computed: {
@@ -119,7 +154,7 @@ export default {
       return RouteNames
     },
     books () {
-      return this.filteredAndSortedBooks(this.selectedTypes, this.sortBy)
+      return this.filteredAndSortedBooks(this.selectedTypes, this.sortFunc)
     },
     options () {
       return [{
@@ -184,10 +219,10 @@ export default {
   methods: {
     getSortedBooks (type) {
       if (this.sortFunctions[type]) {
-        this.sortBy = this.sortFunctions[type]
+        this.sortFunc = this.sortFunctions[type]
       }
       else {
-        this.sortBy = null
+        this.sortFunc = null
       }
     },
     groupBooks() {
@@ -206,6 +241,14 @@ export default {
         default:
           return "Unknown"
       }
+    },
+    pushQueryParams () {
+      this.$router.push({ 
+        query: { 
+          sorting: this.sortBy,
+          filters: JSON.stringify(this.selectedTypes)
+        } 
+      })
     }
   }
 }

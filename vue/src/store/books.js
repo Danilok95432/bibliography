@@ -7,7 +7,9 @@ const syncStateBooks = (state) => {
 export default {
   namespaced: true,
   state: {
-    books: JSON.parse(localStorage.getItem(booksLocalStorageKey)) ?? []
+    books: JSON.parse(localStorage.getItem(booksLocalStorageKey)) ?? [],
+    filters: [],
+    sorting: null,
   },
   getters: {
     getBooks: (state) => state.books,
@@ -40,7 +42,7 @@ export default {
     editBook: (state, payload) => {
       state.books = state.books.map((book) => book.id === payload.id ? payload : book)
       syncStateBooks(state)
-    }
+    },
   },
   actions: {  }
 }

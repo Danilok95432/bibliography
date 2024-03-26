@@ -113,33 +113,15 @@ export default {
     }
   },
   created() {
-    const urlParams = new URLSearchParams(window.location.search)
-    if (urlParams.has('filters') || urlParams.has('sorting')) {
-      if (urlParams.has('filters')) {
-        this.selectedTypes = JSON.parse(urlParams.get('filters'))
-      }
-      if (urlParams.has('sorting')) {
-        this.sortBy = urlParams.get('sorting')
-      }
-    }
-    else {
-      const localFilters = localStorage.getItem('filters')
-      const localSorting = localStorage.getItem('sorting')
-      if (localFilters) {
-        this.selectedTypes = JSON.parse(localFilters)
-      }
-      if (localSorting) {
-        this.sortBy = localSorting
-      }
-    }
+    this.checkUrlFilters()
   },
   watch: {
     selectedTypes: {
       handler () {
         localStorage.setItem('filters', JSON.stringify(this.selectedTypes))
         this.pushQueryParams()
-        },
-        deep: true
+      },
+      deep: true
     },
     sortBy () {
       localStorage.setItem('sorting', this.sortBy)
@@ -249,6 +231,27 @@ export default {
           filters: JSON.stringify(this.selectedTypes)
         } 
       })
+    },
+    checkUrlFilters () {
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.has('filters') || urlParams.has('sorting')) {
+        if (urlParams.has('filters')) {
+          this.selectedTypes = JSON.parse(urlParams.get('filters'))
+        }
+        if (urlParams.has('sorting')) {
+          this.sortBy = urlParams.get('sorting')
+        }
+      }
+      else {
+        const localFilters = localStorage.getItem('filters')
+        const localSorting = localStorage.getItem('sorting')
+        if (localFilters) {
+          this.selectedTypes = JSON.parse(localFilters)
+        }
+        if (localSorting) {
+          this.sortBy = localSorting
+        }
+      }
     }
   }
 }

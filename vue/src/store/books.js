@@ -8,8 +8,6 @@ export default {
   namespaced: true,
   state: {
     books: JSON.parse(localStorage.getItem(booksLocalStorageKey)) ?? [],
-    filters: [],
-    sorting: null,
   },
   getters: {
     getBooks: (state) => state.books,
